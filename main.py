@@ -102,6 +102,14 @@ if __name__ == "__main__":
 
     #
     assistant.setup_assistant_voice()
+    voice_input = "Maschine 1 Bauteil nicht greifbar. Bitte manuell greifen"
+    print(voice_input)
+    voice_input = voice_input.split(" ")
+    for word in voice_input:
+        if word == "":
+            pass
+        else:
+            play_voice_assistant_speech(word)
 
     while True:
         #
@@ -111,8 +119,23 @@ if __name__ == "__main__":
         print(voice_input)
 
         #      ()
+
         voice_input = voice_input.split(" ")
+        voice_output = " "
+        maschinenID = 0
         for word in voice_input:
+            if word == "start" or word == "starten":
+                voice_output = "Maschine startet"
+
+            elif word == "ein":
+                maschinenID = 1
+            elif word == "status":
+                voice_output = "Maschine" + str(maschinenID) + "läuft und hat keinen Fehler"
+            else:
+                pass
+
+        voice_output = voice_output.split(" ")
+        for word in voice_output:
             if word == "":
                 pass
             else:
