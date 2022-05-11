@@ -112,31 +112,4 @@ if __name__ == "__main__":
             play_voice_assistant_speech(word)
 
     while True:
-        #
-        #
-        voice_input = record_and_recognize_audio()
-        # os.remove("microphone-results.wav")
-        print(voice_input)
-
-        #      ()
-
-        voice_input = voice_input.split(" ")
-        voice_output = " "
-        maschinenID = 0
-        for word in voice_input:
-            if word == "start" or word == "starten":
-                voice_output = "Maschine startet"
-
-            elif word == "ein":
-                maschinenID = 1
-            elif word == "status":
-                voice_output = "Maschine" + str(maschinenID) + "läuft und hat keinen Fehler"
-            else:
-                pass
-
-        voice_output = voice_output.split(" ")
-        for word in voice_output:
-            if word == "":
-                pass
-            else:
-                play_voice_assistant_speech(word)
+      play_voice_assistant_speech('hallo')
