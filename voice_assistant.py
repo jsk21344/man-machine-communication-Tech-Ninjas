@@ -1,5 +1,6 @@
 import pyttsx3 as tts
 import speech_recognition
+from app import debug
 
 
 class VoiceAssistant:
@@ -11,7 +12,6 @@ class VoiceAssistant:
         self.setup()
 
     def setup(self):
-        global debug
         voices = self.ttsEngine.getProperty("voices")
         self.ttsEngine.setProperty("voice", voices[8].id)
         self.ttsEngine.setProperty("rate", 150)

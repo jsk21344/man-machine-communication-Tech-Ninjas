@@ -14,9 +14,10 @@ turbo = Turbo(app)
 global assistant
 global operations
 
-global maschinenID
+global maschineID
 global debug
-maschinenID = 0
+
+maschineID = 0
 debug = False
 
 
@@ -68,9 +69,6 @@ def main_start_assistant():
 
 
 def main_init():
-    global assistant
-    global operations
-
     assistant = VoiceAssistant()
     assistant.init()
     voice_input = "Maschine 1 Bauteil nicht greifbar. Bitte manuell greifen"

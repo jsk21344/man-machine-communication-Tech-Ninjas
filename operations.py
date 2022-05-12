@@ -2,6 +2,8 @@ import time
 import math
 import mraa
 
+from app import maschineID, assistant
+
 
 class Operations:
     def eingriff(self):
@@ -51,15 +53,14 @@ class Operations:
             time.sleep(0.1)
 
     def status(self):
-        global assistant
-        global maschinenID
-        assistant.speak("Maschine" + str(maschinenID) +
-                        "läuft und hat keinen Fehler")
+        if(maschineID == 0):
+            assistant.speak("Keine Maschine ausgewählt")
+        else:
+            assistant.speak("Maschine" + str(maschineID) +
+                            "läuft und hat keinen Fehler")
 
     def select_machine(self, id):
-        global maschinenID
-        maschinenID = id
+        maschineID = id
 
     def start(self):
-        global assistant
         assistant.speak("Maschine startet")
