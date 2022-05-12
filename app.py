@@ -3,21 +3,28 @@ from flask import Flask, render_template
 from turbo_flask import Turbo
 import threading
 import time
-import speech_recognition
-import pyttsx3 as tts
-import math
-import mraa
+
+from operations import Operations
+from voice_assistant import VoiceAssistant
+
 
 app = Flask(__name__)
 turbo = Turbo(app)
+
+voice_output = ""
+maschinenID = 0
+debug = False
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/page2')
 def page2():
     return render_template('page2.html')
+
 
 @app.context_processor
 def inject_load():
@@ -28,9 +35,42 @@ def inject_load():
 @app.before_first_request
 def before_first_request():
     threading.Thread(target=update_load).start()
+    threading.Thread(target=main_assistant).start()
+
 
 def update_load():
     with app.app_context():
         while True:
             time.sleep(5)
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
+
+
+def main_assistant():
+    assistant = VoiceAssistant()
+    assistant.init()
+    voice_input = "Maschine 1 Bauteil nicht greifbar. Bitte manuell greifen"
+
+    assistant.speak(voice_input)
+    operations = Operations()
+
+    while True:
+        voice_input = assistant.listen()
+        voice_input = voice_input.split(" ")
+
+        for word in voice_input:
+            if word == "start" or word == "starten":
+                operations.start()
+            elif word == "ein" or word == "eins":
+                operations.select_machine(1)
+            elif word == "status":
+                operations.status()
+            elif word == "eingriff":
+                operations.eingriff()
+            else:
+                pass
+
+        if voice_output == "":
+            pass
+        else:
+            assistant.speak(voice_output)
+            voice_output = ""
