@@ -51,14 +51,15 @@ class Operations:
             time.sleep(0.1)
 
     def status(self):
-        global voice_output
-        voice_output = "Maschine" + \
-            str(maschinenID) + "läuft und hat keinen Fehler"
+        global assistant
+        global maschinenID
+        assistant.speak("Maschine" + str(maschinenID) +
+                        "läuft und hat keinen Fehler")
 
     def select_machine(self, id):
         global maschinenID
         maschinenID = id
 
     def start(self):
-        global voice_output
-        voice_output = "Maschine startet"
+        global assistant
+        assistant.speak("Maschine startet")

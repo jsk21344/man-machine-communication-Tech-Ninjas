@@ -51,4 +51,5 @@ class VoiceAssistant:
             except speech_recognition.RequestError:
                 print("Check your Internet Connection, please")
 
+            print("Listened: " + recognized_data)
             return recognized_data
