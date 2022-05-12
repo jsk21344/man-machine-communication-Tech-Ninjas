@@ -1,4 +1,3 @@
-import random
 from flask import Flask, render_template
 from turbo_flask import Turbo
 import threading
@@ -24,8 +23,12 @@ global maschineID
 global debug
 global eingriff  # ist im eingriff?
 global movement  # hand movement from 'eingriff'
+global error
 
+movement = [-100, 45, 30, 0]
 maschineID = 0
+error = False
+
 debug = False
 
 
@@ -109,34 +112,35 @@ class Operations:
         z_out_F = 0
         pitch_F = 0
         roll_F = 0
+        with app.app_context():
+            while eingriff:
+                x_out = (x.readReg(0x32) | x.readReg(0x33) << 8)
+                x_out = x_out / 25.6
+                y_out = (x.readReg(0x34) | x.readReg(0x35) << 8)
+                y_out = y_out / 25.6
+                z_out = (x.readReg(0x36) | x.readReg(0x37) << 8)
+                z_out = z_out / 25.6
+                sensor = s.read()
 
-        while eingriff:
-            x_out = (x.readReg(0x32) | x.readReg(0x33) << 8)
-            x_out = x_out / 25.6
-            y_out = (x.readReg(0x34) | x.readReg(0x35) << 8)
-            y_out = y_out / 25.6
-            z_out = (x.readReg(0x36) | x.readReg(0x37) << 8)
-            z_out = z_out / 25.6
-            sensor = s.read()
+                roll = math.atan(
+                    y_out/math.sqrt(x_out**2+z_out**2))*180/math.pi
+                pitch = math.atan(-1*x_out /
+                                  math.sqrt(y_out**2+z_out**2))*180/math.pi
 
-            roll = math.atan(
-                y_out/math.sqrt(x_out**2+z_out**2))*180/math.pi
-            pitch = math.atan(-1*x_out /
-                              math.sqrt(y_out**2+z_out**2))*180/math.pi
+                roll_F = 0.5*roll_F+0.5*roll
+                pitch_F = 0.5 * pitch_F + 0.5 * pitch
+                x_out_F = 0.5 * x_out_F + 0.5 * x_out
+                y_out_F = 0.5 * y_out_F + 0.5 * y_out
+                z_out_F = 0.5 * z_out_F + 0.5 * z_out
+                sensor_F = 0.5 * sensor_F + 0.5 * sensor
 
-            roll_F = 0.5*roll_F+0.5*roll
-            pitch_F = 0.5 * pitch_F + 0.5 * pitch
-            x_out_F = 0.5 * x_out_F + 0.5 * x_out
-            y_out_F = 0.5 * y_out_F + 0.5 * y_out
-            z_out_F = 0.5 * z_out_F + 0.5 * z_out
-            sensor_F = 0.5 * sensor_F + 0.5 * sensor
-
-            print("Roll:" + str(roll_F) + " pitch: " + str(pitch_F) + " x_out: " + str(x_out_F) +
-                  " y_out: " + str(y_out_F) + " z_out: " + str(z_out_F) + "Sensor F: " + str(sensor_F))
-            # [transZ, rotZ, rotX, rotY]
-            movement = ['-100', pitch_F, roll_F, '0']
-            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
-            time.sleep(0.1)
+                print("Roll:" + str(roll_F) + " pitch: " + str(pitch_F) + " x_out: " + str(x_out_F) +
+                      " y_out: " + str(y_out_F) + " z_out: " + str(z_out_F) + "Sensor F: " + str(sensor_F))
+                # [transZ, rotZ, rotX, rotY]
+                movement = [-100, pitch_F, roll_F, 0]
+                turbo.push(turbo.replace(
+                    render_template('index.html'), 'cube'))
+                time.sleep(0.1)
 
     def status(self):
         global assistant
@@ -150,6 +154,7 @@ class Operations:
 
     def select_machine(self, id):
         global maschineID
+        global assistant
 
         maschineID = id
         assistant.speak("Maschine " + str(maschineID) + " ausgewählt")
@@ -161,9 +166,17 @@ class Operations:
 
     def stopp(self):
         global eingriff
+        global assistant
 
         eingriff = False
         assistant.speak("Stopp Eingriff")
+
+    def check_error(self):
+        global error
+        global assistant
+
+        error = False
+        assistant.speak("Fehler wurde behoben")
 
 
 @app.route('/')
@@ -171,26 +184,24 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/page2')
-def page2():
-    return render_template('page2.html')
+@app.route('/error')
+def throw_error():
+    global error
+
+    error = True
+    assistant.speak(
+        "Maschine 1 Error. Bauteil nicht greifbar. Bitte manuell greifen")
 
 
 @app.context_processor
 def inject_load():
+    global movement
     return {'transZ': movement[0], 'rotZ': movement[1], 'rotX': movement[2], 'rotY': movement[3]}
 
 
 @app.before_first_request
 def before_first_request():
     threading.Thread(target=main_init).start()
-
-
-def update_load():
-    with app.app_context():
-        while True:
-            time.sleep(5)
-            turbo.push(turbo.replace(render_template('demo.html'), 'cube'))
 
 
 def main_start_assistant():
@@ -212,6 +223,7 @@ def main_start_assistant():
                 threading.Thread(target=operations.eingriff).start()
             elif word == "stopp":
                 operations.stopp()
+                operations.check_error()
             else:
                 pass
 
@@ -222,7 +234,6 @@ def main_init():
 
     assistant = VoiceAssistant()
     assistant.init()
-    assistant.speak("Maschine 1 Bauteil nicht greifbar. Bitte manuell greifen")
     operations = Operations()
 
     main_start_assistant()
