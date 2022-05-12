@@ -91,6 +91,9 @@ class Operations:
         global eingriff
         global movement
         global debug
+        global assistant
+
+        assistant.speak("Starte Eingriff an Maschine 1")
 
         eingriff = True
 
@@ -197,7 +200,7 @@ def throw_error():
 
     error = True
     assistant.speak(
-        "Maschine 1 Error. Bauteil nicht greifbar. Bitte manuell greifen")
+        "Maschine 1 Fehler. Bauteil nicht greifbar. Bitte manuell greifen")
 
     return render_template('index.html')
 
