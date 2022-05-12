@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<title>TechNinjas -Demo-</title>
+	{{ turbo() }}
+</head>
+
+<style>
+	* {
+		box-sizing: border-box;
+	}
+
+	body {
+		font-family: sans-serif;
+	}
+
+	.scene {
+		width: 200px;
+		height: 200px;
+		border: 1px solid #CCC;
+		margin: 80px;
+		perspective: 400px;
+	}
+
+	.cube {
+		width: 200px;
+		height: 200px;
+		position: relative;
+		transform-style: preserve-3d;
+		transform: translateZ(-100px);
+		transition: transform 1s;
+	}
+
+	.cube.show-first {
+		transform: 
+			translateZ({{ transZ }} px)
+			rotateZ({{ rotZ }}deg)
+			rotateX({{ rotX }}deg)
+	 		rotateY({{ rotY }}deg);
+	}
+
+	.cube__face {
+		position: absolute;
+		width: 200px;
+		height: 200px;
+		border: 2px solid black;
+		line-height: 200px;
+		font-size: 40px;
+		font-weight: bold;
+		color: white;
+		text-align: center;
+	}
+
+	.cube__face--front {
+		background: hsla(0, 100%, 50%, 0.7);
+	}
+
+	.cube__face--right {
+		background: hsla(60, 100%, 50%, 0.7);
+	}
+
+	.cube__face--back {
+		background: hsla(120, 100%, 50%, 0.7);
+	}
+
+	.cube__face--left {
+		background: hsla(180, 100%, 50%, 0.7);
+	}
+
+	.cube__face--top {
+		background: hsla(240, 100%, 50%, 0.7);
+	}
+
+	.cube__face--bottom {
+		background: hsla(300, 100%, 50%, 0.7);
+	}
+
+	.cube__face--front {
+		transform: rotateY(0deg) translateZ(100px);
+	}
+
+	.cube__face--right {
+		transform: rotateY(90deg) translateZ(100px);
+	}
+
+	.cube__face--back {
+		transform: rotateY(180deg) translateZ(100px);
+	}
+
+	.cube__face--left {
+		transform: rotateY(-90deg) translateZ(100px);
+	}
+
+	.cube__face--top {
+		transform: rotateX(90deg) translateZ(100px);
+	}
+
+	.cube__face--bottom {
+		transform: rotateX(-90deg) translateZ(100px);
+	}
+
+	label {
+		margin-right: 10px;
+	}
+</style>
+
+<body>
+	<div class="scene">
+		<div id="cube" class="cube">
+			<div class="cube__face cube__face--front">Vorne</div>
+			<div class="cube__face cube__face--back">Hinten</div>
+			<div class="cube__face cube__face--right">Rechts</div>
+			<div class="cube__face cube__face--left">Links</div>
+			<div class="cube__face cube__face--top">Oben</div>
+			<div class="cube__face cube__face--bottom">Unten</div>
+		</div>
+	</div>
+
+	<script>
+		var cube = document.querySelector('.cube');
+		cube.classList.add('show-first');
+		currentClass = 'show-first';
+	</script>
+
+</body>

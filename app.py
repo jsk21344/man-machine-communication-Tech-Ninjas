@@ -22,7 +22,8 @@ global operations
 
 global maschineID
 global debug
-global eingriff
+global eingriff  # ist im eingriff?
+global movement  # hand movement from 'eingriff'
 
 maschineID = 0
 debug = False
@@ -85,6 +86,7 @@ class VoiceAssistant:
 class Operations:
     def eingriff(self):
         global eingriff
+        global movement
 
         eingriff = True
 
@@ -131,6 +133,9 @@ class Operations:
 
             print("Roll:" + str(roll_F) + " pitch: " + str(pitch_F) + " x_out: " + str(x_out_F) +
                   " y_out: " + str(y_out_F) + " z_out: " + str(z_out_F) + "Sensor F: " + str(sensor_F))
+            # [transZ, rotZ, rotX, rotY]
+            movement = ['-100', pitch_F, roll_F, '0']
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
             time.sleep(0.1)
 
     def status(self):
@@ -154,11 +159,11 @@ class Operations:
 
         assistant.speak("Maschine startet")
 
-    def stop():
+    def stopp(self):
         global eingriff
 
         eingriff = False
-        assistant.speak("Stop Eingriff")
+        assistant.speak("Stopp Eingriff")
 
 
 @app.route('/')
@@ -173,13 +178,11 @@ def page2():
 
 @app.context_processor
 def inject_load():
-    load = [int(random.random() * 100) / 100 for _ in range(3)]
-    return {'load1': load[0], 'load5': load[1], 'load15': load[2]}
+    return {'transZ': movement[0], 'rotZ': movement[1], 'rotX': movement[2], 'rotY': movement[3]}
 
 
 @app.before_first_request
 def before_first_request():
-    threading.Thread(target=update_load).start()
     threading.Thread(target=main_init).start()
 
 
@@ -187,7 +190,7 @@ def update_load():
     with app.app_context():
         while True:
             time.sleep(5)
-            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
+            turbo.push(turbo.replace(render_template('demo.html'), 'cube'))
 
 
 def main_start_assistant():
@@ -206,9 +209,9 @@ def main_start_assistant():
             elif word == "status":
                 operations.status()
             elif word == "eingriff":
-                operations.eingriff()
-            elif word == "stop":
-                operations.stop()
+                threading.Thread(target=operations.eingriff).start()
+            elif word == "stopp":
+                operations.stopp()
             else:
                 pass
 
