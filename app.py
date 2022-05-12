@@ -90,6 +90,7 @@ class Operations:
     def eingriff(self):
         global eingriff
         global movement
+        global debug
 
         eingriff = True
 
@@ -137,20 +138,26 @@ class Operations:
                 print("Roll:" + str(roll_F) + " pitch: " + str(pitch_F) + " x_out: " + str(x_out_F) +
                       " y_out: " + str(y_out_F) + " z_out: " + str(z_out_F) + "Sensor F: " + str(sensor_F))
                 # [transZ, rotZ, rotX, rotY]
-                movement = [-100, pitch_F, roll_F, 0]
-                turbo.push(turbo.replace(
-                    render_template('index.html'), 'cube'))
+                if (debug):
+                    movement = [-100, pitch_F, roll_F, 0]
+                    turbo.push(turbo.replace(
+                        render_template('index.html'), 'cube'))
                 time.sleep(0.1)
 
     def status(self):
         global assistant
         global maschineID
+        global error
 
         if(maschineID == 0):
             assistant.speak("Keine Maschine ausgewählt")
         else:
-            assistant.speak("Maschine" + str(maschineID) +
-                            "läuft und hat keinen Fehler")
+            if(error):
+                assistant.speak("Maschine" + str(maschineID) +
+                                "läuft nicht und ein Fehler ist aufgetreten")
+            else:
+                assistant.speak("Maschine" + str(maschineID) +
+                                "läuft und hat keinen Fehler")
 
     def select_machine(self, id):
         global maschineID
