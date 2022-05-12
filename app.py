@@ -22,6 +22,7 @@ global operations
 
 global maschineID
 global debug
+global eingriff
 
 maschineID = 0
 debug = False
@@ -83,6 +84,10 @@ class VoiceAssistant:
 
 class Operations:
     def eingriff(self):
+        global eingriff
+
+        eingriff = True
+
         s = mraa.Aio(3)
         x = mraa.I2c(0)
         x.address(0x53)
@@ -103,7 +108,7 @@ class Operations:
         pitch_F = 0
         roll_F = 0
 
-        while True:
+        while eingriff:
             x_out = (x.readReg(0x32) | x.readReg(0x33) << 8)
             x_out = x_out / 25.6
             y_out = (x.readReg(0x34) | x.readReg(0x35) << 8)
@@ -142,11 +147,18 @@ class Operations:
         global maschineID
 
         maschineID = id
+        assistant.speak("Maschine " + str(maschineID) + " ausgewählt")
 
     def start(self):
         global assistant
 
         assistant.speak("Maschine startet")
+
+    def stop():
+        global eingriff
+
+        eingriff = False
+        assistant.speak("Stop Eingriff")
 
 
 @app.route('/')
@@ -195,6 +207,8 @@ def main_start_assistant():
                 operations.status()
             elif word == "eingriff":
                 operations.eingriff()
+            elif word == "stop":
+                operations.stop()
             else:
                 pass
 
@@ -209,4 +223,3 @@ def main_init():
     operations = Operations()
 
     main_start_assistant()
-
