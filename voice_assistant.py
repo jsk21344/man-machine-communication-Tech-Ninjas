@@ -1,6 +1,7 @@
 import pyttsx3 as tts
 import speech_recognition
 
+debug = False
 
 class VoiceAssistant:
     def init(self):
