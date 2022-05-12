@@ -27,13 +27,7 @@
 		transition: transform 1s;
 	}
 	
-	.cube.show-front  { transform: translateZ(-100px) rotateY(   0deg); }
-	.cube.show-right  { transform: translateZ(-100px) rotateY( -90deg); }
-	.cube.show-back   { transform: translateZ(-100px) rotateY(-180deg); }
-	.cube.show-left   { transform: translateZ(-100px) rotateY(  90deg); }
-	.cube.show-top    { transform: translateZ(-100px) rotateX( -90deg); }
-	.cube.show-bottom { transform: translateZ(-100px) rotateX(  90deg); }
-	
+	.cube.show-first  { transform: translateZ(-100px) rotateZ( 0deg) rotateX( 0deg) rotateY( 0deg); }	
 	.cube__face {
 		position: absolute;
 		width: 200px;
@@ -74,44 +68,11 @@
 			<div class="cube__face cube__face--bottom">Unten</div>
 		</div>
 	</div>
-	<p class="radio-group">
-		<label>
-			<input type="radio" name="rotate-cube-side" value="front" checked /> vorne
-		</label>
-		<label>
-			<input type="radio" name="rotate-cube-side" value="right" /> rechts
-		</label>
-		<label>
-			<input type="radio" name="rotate-cube-side" value="back" /> hinten
-		</label>
-		<label>
-			<input type="radio" name="rotate-cube-side" value="left" /> links
-		</label>
-		<label>
-			<input type="radio" name="rotate-cube-side" value="top" /> oben
-		</label>
-		<label>
-			<input type="radio" name="rotate-cube-side" value="bottom" /> unten
-		</label>
-	</p>
 	
 	<script>
 		var cube = document.querySelector('.cube');
-		var radioGroup = document.querySelector('.radio-group');
-		var currentClass = '';
-
-		function changeSide() {
-			var checkedRadio = radioGroup.querySelector(':checked');
-			var showClass = 'show-' + checkedRadio.value;
-			if ( currentClass ) {
-				cube.classList.remove( currentClass );
-			}
-			cube.classList.add( showClass );
-			currentClass = showClass;
-		}
-		// set initial side
-		changeSide();
-		radioGroup.addEventListener( 'change', changeSide );
+		cube.classList.add( 'show-first' );
+		currentClass = 'show-first';
 	</script>
 	
 </body>
