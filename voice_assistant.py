@@ -3,46 +3,38 @@ import speech_recognition
 
 
 class VoiceAssistant:
-    ttsEngine
-    recognizer
-    microphone
+    def init(self):
+        self.recognizer = speech_recognition.Recognizer()
+        self.microphone = speech_recognition.Microphone()
+        self.ttsEngine = tts.init()
 
-    def init():
-        global ttsEngine
-        global recognizer
-        global microphone
+        self.setup()
 
-        recognizer = speech_recognition.Recognizer()
-        microphone = speech_recognition.Microphone()
-        ttsEngine = tts.init()
-
-        VoiceAssistant.setup()
-
-    def setup(assistant):
+    def setup(self):
         global debug
-        voices = ttsEngine.getProperty("voices")
-        assistant.recognition_language = "de-DE"
-        ttsEngine.setProperty("voice", voices[8].id)
-        ttsEngine.setProperty("rate", 150)
+        voices = self.ttsEngine.getProperty("voices")
+        self.ttsEngine.setProperty("voice", voices[8].id)
+        self.ttsEngine.setProperty("rate", 150)
         if debug:
             for voice in voices:
                 print(str(voice.id))
             print(str(voices[8].id))
 
-    def speak(text_to_speech):
+    def speak(self, text_to_speech):
         print(str(text_to_speech))
-        ttsEngine.say(str(text_to_speech))
-        ttsEngine.runAndWait()
+        self.ttsEngine.say(str(text_to_speech))
+        self.ttsEngine.runAndWait()
 
-    def listen():
-        with microphone:
+    def listen(self):
+        with self.microphone:
             recognized_data = ""
 
-            recognizer.adjust_for_ambient_noise(microphone, duration=2)
+            self.recognizer.adjust_for_ambient_noise(
+                self.microphone, duration=2)
 
             try:
                 print("Listening...")
-                audio = recognizer.listen(microphone, 5, 5)
+                audio = self.recognizer.listen(self.microphone, 5, 5)
 
             except speech_recognition.WaitTimeoutError:
                 print("Can you check if your microphone is on, please?")
@@ -50,7 +42,7 @@ class VoiceAssistant:
 
             try:
                 print("Started recognition...")
-                recognized_data = recognizer.recognize_google(
+                recognized_data = self.recognizer.recognize_google(
                     audio, language="de").lower()
 
             except speech_recognition.UnknownValueError:

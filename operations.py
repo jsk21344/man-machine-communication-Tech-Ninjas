@@ -4,7 +4,7 @@ import mraa
 
 
 class Operations:
-    def eingriff():
+    def eingriff(self):
         s = mraa.Aio(3)
         x = mraa.I2c(0)
         x.address(0x53)
@@ -50,15 +50,15 @@ class Operations:
                   " y_out: " + str(y_out_F) + " z_out: " + str(z_out_F) + "Sensor F: " + str(sensor_F))
             time.sleep(0.1)
 
-    def status():
+    def status(self):
         global voice_output
         voice_output = "Maschine" + \
             str(maschinenID) + "läuft und hat keinen Fehler"
 
-    def select_machine(id):
+    def select_machine(self, id):
         global maschinenID
         maschinenID = id
 
-    def start():
+    def start(self):
         global voice_output
         voice_output = "Maschine startet"
