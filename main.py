@@ -1,142 +1,37 @@
-# coding=utf-8
-# This is a sample Python script.
+from operations import Operations
+from voice_assistant import VoiceAssistant
 
-# Press Umschalt+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-import speech_recognition
-import pyttsx3 as tts
-
-
-class VoiceAssistant:
-    """
-      ,  , ,
-    """
-    name = ""
-    sex = ""
-    speech_language = ""
-    recognition_language = ""
-
-
-    def setup_assistant_voice(assistant):
-
-        voices = ttsEngine.getProperty("voices")
-
-        if assistant.speech_language == "en":
-            assistant.recognition_language = "en-US"
-            if assistant.sex == "female":
-            # Microsoft Zira Desktop - English (United States)
-                ttsEngine.setProperty("voice", voices[1].id)
-            else:
-            # Microsoft David Desktop - English (United States)
-                ttsEngine.setProperty("voice", voices[2].id)
-        else:
-            assistant.recognition_language = "ru-RU"
-            # Microsoft Irina Desktop - Russian
-            ttsEngine.setProperty("voice", voices[0].id)
-
-
-def play_voice_assistant_speech(text_to_speech):
-    """
-         (  )
-        :param text_to_speech: ,
-        """
-    ttsEngine.say(str(text_to_speech))
-    ttsEngine.runAndWait()
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print("Hi, {0}".format(name))  # Press Strg+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-
-
-def record_and_recognize_audio():
-    """
-
-    """
-    with microphone:
-        recognized_data = ""
-
-        #
-        recognizer.adjust_for_ambient_noise(microphone, duration=2)
-
-        try:
-            print("Listening...")
-            audio = recognizer.listen(microphone, 5, 5)
-
-        except speech_recognition.WaitTimeoutError:
-            print("Can you check if your microphone is on, please?")
-            return
-
-        #  online-  Google
-        try:
-            print("Started recognition...")
-            recognized_data = recognizer.recognize_google(audio, language="de").lower()
-
-        except speech_recognition.UnknownValueError:
-            pass
-
-        #
-        except speech_recognition.RequestError:
-            print("Check your Internet Connection, please")
-
-        return recognized_data
+voice_output = ""
+maschinenID = 0
+debug = False
 
 
 if __name__ == "__main__":
-
-    recognizer = speech_recognition.Recognizer()
-    microphone = speech_recognition.Microphone()
-
-    #
-    ttsEngine = tts.init()
-
-    #
     assistant = VoiceAssistant()
-    assistant.name = "Alice"
-    assistant.sex = "female"
-    assistant.speech_language = "ru"
-
-    #
-    assistant.setup_assistant_voice()
+    assistant.init()
     voice_input = "Maschine 1 Bauteil nicht greifbar. Bitte manuell greifen"
-    print(voice_input)
-    voice_input = voice_input.split(" ")
-    for word in voice_input:
-        if word == "":
-            pass
-        else:
-            play_voice_assistant_speech(word)
+
+    assistant.speak(voice_input)
+    operations = Operations()
 
     while True:
-        #
-        #
-        voice_input = record_and_recognize_audio()
-        # os.remove("microphone-results.wav")
-        print(voice_input)
-
-        #      ()
-
+        voice_input = assistant.listen()
         voice_input = voice_input.split(" ")
-        voice_output = " "
-        maschinenID = 0
+
         for word in voice_input:
             if word == "start" or word == "starten":
-                voice_output = "Maschine startet"
-
-            elif word == "ein":
-                maschinenID = 1
+                operations.start()
+            elif word == "ein" or word == "eins":
+                operations.select_machine(1)
             elif word == "status":
-                voice_output = "Maschine" + str(maschinenID) + "läuft und hat keinen Fehler"
+                operations.status()
+            elif word == "eingriff":
+                operations.eingriff()
             else:
                 pass
 
-        voice_output = voice_output.split(" ")
-        for word in voice_output:
-            if word == "":
-                pass
-            else:
-                play_voice_assistant_speech(word)
+        if voice_output == "":
+            pass
+        else:
+            assistant.speak(voice_output)
+            voice_output = ""
