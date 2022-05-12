@@ -58,7 +58,7 @@ class VoiceAssistant:
 
     def listen(self):
         with self.microphone:
-            recognized_data = ""
+            recognized_data = " "
 
             self.recognizer.adjust_for_ambient_noise(
                 self.microphone, duration=2)
@@ -191,6 +191,8 @@ def throw_error():
     error = True
     assistant.speak(
         "Maschine 1 Error. Bauteil nicht greifbar. Bitte manuell greifen")
+
+    return render_template('index.html')
 
 
 @app.context_processor
