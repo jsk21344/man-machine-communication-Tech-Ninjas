@@ -106,9 +106,9 @@ if __name__ == "__main__":
                 time.sleep(0.01)
                 x.writeReg(0x1E, 1)
                 time.sleep(0.01)
-                x.writeReg(0x1F, -2)
+                x.writeReg(0x1F, 130)
                 time.sleep(0.01)
-                x.writeReg(0x20, -9)
+                x.writeReg(0x20, 137)
                 time.sleep(0.01)
 
                 sensor_F = 0
@@ -127,8 +127,8 @@ if __name__ == "__main__":
                     z_out = z_out / 25.6
                     sensor = s.read()
 
-                    roll = math.atan(y_out/math.sqrt(math.exp(x_out, 2)+math.exp(z_out, 2)))*180/pi()
-                    pitch = math.atan(-1*x_out/math.sqrt(math.exp(y_out, 2)+math.exp(z_out, 2)))*180/pi()
+                    roll = math.atan(y_out/math.sqrt(x_out**2+z_out**2))*180/math.pi
+                    pitch = math.atan(-1*x_out/math.sqrt(y_out**2+z_out**2))*180/math.pi
 
                     roll_F = 0.5*roll_F+0.5*roll
                     pitch_F = 0.5 * pitch_F + 0.5 * pitch
