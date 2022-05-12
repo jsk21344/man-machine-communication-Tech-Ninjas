@@ -11,8 +11,11 @@ from voice_assistant import VoiceAssistant
 app = Flask(__name__)
 turbo = Turbo(app)
 
+global voice_output
 voice_output = ""
+global maschinenID
 maschinenID = 0
+global debug
 debug = False
 
 
